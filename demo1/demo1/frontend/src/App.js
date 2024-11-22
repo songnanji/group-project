@@ -35,7 +35,7 @@ function App() {
             <Header 
                 isLoggedIn={!!user} 
                 onLogout={handleLogout} 
-                userEmail={user?.email}
+                username={user?.username}
             />
             <Routes>
                 <Route path="/" element={
