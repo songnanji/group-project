@@ -36,7 +36,7 @@ public class SecuirtyConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource)) // 새로운 방식으로 CORS 설정 적용
 
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/error","/","/api/signup","/api/login","/h2-console/**").permitAll() // /api/signup 경로 허용
+                        .requestMatchers("/error","/","/api/signup","/api/login","/api/movies/search","/h2-console/**").permitAll() // /api/signup 경로 허용
                         .requestMatchers("/favicon.ico", "/**/favicon.ico").permitAll()
                         .anyRequest().authenticated() // 나머지 요청은 인증 필요
                 )

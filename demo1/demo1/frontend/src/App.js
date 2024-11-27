@@ -11,15 +11,30 @@ import MyPage from './components/MyPage';
 import Reservation from './components/Reservation';
 import Button from './components/ui/Button';
 import './App.css';
+import axios from "axios";
+import SearchResult from './components/SearchResult'; // 추가된 부분
 
 function App() {
     const [searchTerm, setSearchTerm] = useState('');
     const [sortOption, setSortOption] = useState('');
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
+    const [searchResults, setSearchResults] = useState([]); // 검색 결과 상태 추가
 
     // 페이지 로드 시 로그인 상태 유지
     useEffect(() => {
+
+        const handlePopState = () => {
+            window.location.reload(); // 새로고침
+        };
+
+        window.addEventListener("popstate", handlePopState);
+
+        // 컴포넌트 언마운트 시 이벤트 제거
+        return () => {
+            window.removeEventListener("popstate", handlePopState);
+        };
+
         const storedUser = JSON.parse(localStorage.getItem('currentUser'));
         if (storedUser) {
             setUser(storedUser);
@@ -44,22 +59,51 @@ function App() {
         window.open('http://www.cgv.co.kr/ticket/', '_blank');
     };
 
+    //
+    // 검색 처리 함수
+    const onSearch = (title) => {
+        axios
+            .get(`http://localhost:8080/api/movies/search?title=${title}`)
+            .then((response) => {
+                navigate('/search', { state: { movies: response.data } }); // 검색 결과를 새로운 페이지에 전달
+            })
+            .catch((error) => {
+                console.error('Error fetching search results:', error);
+            });
+    };
+
+    const onGenreSearch = (genre) => {
+        axios
+            .get(`http://localhost:8080/api/movies/search?genre=${genre}`)
+            .then((response) => {
+                navigate('/search', { state: { movies: response.data } });
+            })
+            .catch((error) => {
+                console.error('Error fetching genre search results:', error);
+            });
+    };
+
+
     return (
         <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
-            <Header 
-                isLoggedIn={!!user} 
-                onLogout={handleLogout} 
+            <Header
+                isLoggedIn={!!user}
+                onLogout={handleLogout}
                 username={user?.username}
             />
             <Routes>
                 <Route path="/" element={
                     <div>
-                        <SearchBar 
+                        <SearchBar
                             searchTerm={searchTerm}
                             setSearchTerm={setSearchTerm}
                             sortOption={sortOption}
                             setSortOption={setSortOption}
+                            onSearch={onSearch} // Pass onSearch as a prop
+                            onGenreSearch={onGenreSearch} // 새로운 함수 전달
+
                         />
+
                         <MovieGrid searchTerm={searchTerm} sortOption={sortOption} user={user} />
                         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px', marginTop: '20px' }}>
                             <button onClick={goToBoard} className="board-button"> 게시판 이동</button>
@@ -72,10 +116,14 @@ function App() {
                 <Route path="/board" element={<Board user={user} />} />
                 <Route path="/mypage" element={<MyPage user={user} />} />
                 <Route path="/reservation" element={<Reservation />} />
+                <Route path="/search" element={<SearchResult />} />
+
             </Routes>
-            <Footer />          
+            <Footer />
         </div>
     );
+
+
 }
 
 export default App;
