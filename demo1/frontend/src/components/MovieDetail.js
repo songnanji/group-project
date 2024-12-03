@@ -44,13 +44,57 @@ function MovieDetail() {
 
             fetchMovieDetail();
         }
-    }, [id, movie]); 
+    }, [id, movie]);
 
-    const handleReviewSubmit = (e) => {
+    useEffect(() => {
+        const fetchReviews = async () => {
+            try {
+                const response = await fetch(`http://localhost:8080/api/reviews/movie/${id}`);
+                if (!response.ok) {
+                    throw new Error('사용자 리뷰를 불러오는데 실패했습니다.');
+                }
+                const data = await response.json();
+                setUserReviews(data.map(review => review.content)); // 리뷰 내용만 상태에 추가
+            } catch (error) {
+                console.error('Error fetching reviews:', error.message);
+            }
+        };
+
+        fetchReviews();
+    }, [id]);
+
+    const handleReviewSubmit = async (e) => {
         e.preventDefault();
         if (userReview.trim()) {
-            setUserReviews([...userReviews, userReview]);
-            setUserReview('');
+            try {
+                // API 요청 보내기
+                const response = await fetch('http://localhost:8080/api/reviews', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        movieId: Number(id), // 현재 영화의 ID
+                        content: userReview
+                    }),
+                });
+
+                if (!response.ok) {
+                    throw new Error('리뷰 저장에 실패했습니다.');
+                }
+
+                // 서버로부터 저장된 리뷰 데이터 받기
+                const newReview = await response.json();
+                console.log(newReview);
+
+
+                // 사용자 리뷰 목록에 추가
+                setUserReviews([...userReviews, newReview.content]);
+                setUserReview(''); // 입력창 초기화
+            } catch (error) {
+                console.error('Error:', error.message);
+                alert('리뷰 저장 중 문제가 발생했습니다.');
+            }
         }
     };
 
