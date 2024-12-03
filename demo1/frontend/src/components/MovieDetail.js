@@ -9,6 +9,8 @@ function MovieDetail() {
     const [loading, setLoading] = useState(!location.state?.movie);
     const [error, setError] = useState(null);
 
+    // 좋아요 및 공유 버튼 상태 관리
+    const [likes, setLikes] = useState(0);
 
     // 리뷰 관련 상태 관리
     const [userReview, setUserReview] = useState('');
@@ -54,6 +56,19 @@ function MovieDetail() {
         }
     };
 
+    const handleLikeClick = () => {
+        setLikes(likes + 1);
+    };
+
+    const handleShareClick = () => {
+        // 공유 링크 생성
+        const shareLink = window.location.href;
+        navigator.clipboard.writeText(shareLink).then(() => {
+            alert('링크가 복사되었습니다!');
+        });
+    };
+
+
     if (loading) return <div>로딩 중...</div>;
     if (error) return <div>에러: {error}</div>;
     if (!movie) return <div>영화를 찾을 수 없습니다.</div>;
@@ -83,7 +98,19 @@ function MovieDetail() {
             </div>
         </div>
 
-    
+
+            {/* 좋아요 및 공유 버튼 */}
+            <div style={{ display: 'flex', alignItems: 'center', marginTop: '20px', gap: '10px' }}>
+                <button onClick={handleLikeClick} style={{ padding: '10px 20px' }}>
+                    좋아요 ❤️ ({likes})
+                </button>
+                <button onClick={handleShareClick} style={{ padding: '10px 20px' }}>
+                    공유하기 🔗
+                </button>
+            </div>
+
+
+
             {/* 리뷰 섹션 */}
             <div style={{ marginTop: '40px' }}>
                 <h2>사용자 리뷰</h2>
