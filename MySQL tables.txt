@@ -1,0 +1,73 @@
+DBMS인 MySQL에서의 데이터베이스 만들기
+
+create database movie_db;
+
+
+
+movies3 테이블 생성
+
+
+CREATE TABLE `movies3` (
+  `id` INT NOT NULL ,
+  `url` VARCHAR(2048) COLLATE utf8_bin,
+  `title` VARCHAR(255) COLLATE utf8_bin DEFAULT NULL,
+  `year` INT DEFAULT NULL,
+  `rating` DOUBLE DEFAULT NULL,
+  `runtime` INT DEFAULT NULL,
+  `genres` VARCHAR(255) COLLATE utf8_bin DEFAULT NULL,
+  `large_cover_image` VARCHAR(255) COLLATE utf8_bin DEFAULT NULL,
+  `director` VARCHAR(255) COLLATE utf8_bin DEFAULT NULL,
+  `description_intro` mediumtext COLLATE utf8_bin DEFAULT NULL,
+  'likes' INT DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+
+
+review 테이블 생성
+
+
+CREATE TABLE review (
+                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                        movie_id BIGINT NOT NULL,
+                        content VARCHAR(500) NOT NULL
+);
+
+
+site_user 테이블 생성
+
+
+CREATE TABLE `site_user` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `email` VARCHAR(255) COLLATE utf8_bin DEFAULT NULL,
+  `password` VARCHAR(255) COLLATE utf8_bin DEFAULT NULL,
+  `username` VARCHAR(255) COLLATE utf8_bin DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `UK8vlkw482t3gpnebxcm03ywk9p` (`email`),
+  UNIQUE KEY `UKjerlw3g2urnh55wcrm2b5kqnj` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+
+
+posts 테이블 생성
+
+
+CREATE TABLE posts (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    author VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
+comments 테이블 생성
+
+CREATE TABLE comments (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    content TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    post_id BIGINT NOT NULL,
+    FOREIGN KEY (post_id) REFERENCES posts(id) ON DELETE CASCADE
+);

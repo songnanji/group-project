@@ -71,17 +71,7 @@ public class UserController {
     public ResponseEntity<?> login(@RequestBody UserLoginForm userLoginForm) {
         logger.info("Received login request: {}", userLoginForm);
 
-        // 사용자 인증 로직 수행(로그인 시 username을 불러오지 못하는 코드
-//        try {
-//            UserDetails userDetails = userSecurityServiceL.loadUserByEmail(userLoginForm.getEmail());
-//            if (passwordEncoder.matches(userLoginForm.getPassword(), userDetails.getPassword())) {
-//                // 로그인 성공
-//                return ResponseEntity.ok(Map.of("message", "로그인 성공", "email", userDetails.getUsername(), "username", userDetails.getUsername()));
-//            } else {
-//                // 비밀번호가 일치하지 않음
-//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "잘못된 비밀번호입니다."));
-//            }
-//        }
+
         try {
             CustomUserDetails userDetails = (CustomUserDetails) userSecurityServiceL.loadUserByEmail(userLoginForm.getEmail());
             if (passwordEncoder.matches(userLoginForm.getPassword(), userDetails.getPassword())) {
